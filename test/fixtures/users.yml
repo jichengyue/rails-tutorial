@@ -1,0 +1,6 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#固件的作用是为测试数据库提供示例数据
+michael:
+  name: Michael Example
+  email: michael@14cells.com
+  password_digest: <%= User.digest('password')%>
