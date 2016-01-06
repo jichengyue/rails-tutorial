@@ -23,6 +23,12 @@ gem 'jbuilder', '~> 2.2.3'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 
+#这个 gem 会使用半真实的名字和电子邮件地址创建示例用户
+gem 'faker','1.4.2'
+
+#下面两个gem提供bootstrap样式的分页展示效果
+gem 'will_paginate','3.0.7'
+gem 'bootstrap-will_paginate', '0.0.10'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

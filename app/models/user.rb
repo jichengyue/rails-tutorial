@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
 									uniqueness:{case_sensitive: false}
 
 	has_secure_password
-	validates :password,presence: true,length: { minimum: 6}
+	validates :password,presence: true,length: { minimum: 6},allow_nil:true
 
 	#返回指定字符串的哈希摘要
 	def User.digest(string)
