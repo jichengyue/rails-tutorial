@@ -1,7 +1,9 @@
 class User < ActiveRecord::Base
-	attr_accessor :remember_token
+	attr_accessor :remember_token,:activation_token,:reset_token
 
-	before_save { self.email = email.downcase}
+	before_save :downcase_email
+	before_create :create_activation_digest
+	
 	validates :name,presence: true, length: {maximum:50}
 	VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
 	validates :email,presence: true,length: {maximum: 255},
@@ -29,12 +31,52 @@ class User < ActiveRecord::Base
 	end
 
 	#如果指定的令牌和摘要匹配，返回true
-	def authenticated?(remember_token)
-		return false if remember_digest.nil?
-		BCrypt::Password.new(remember_digest).is_password?(remember_token)
+	def authenticated?(attribute,token)
+		digest = self.send("#{attribute}_digest")
+		return false if digest.nil?
+		BCrypt::Password.new(digest).is_password?(token)
 	end
+	# def authenticated?(remember_token)
+	# 	return false if remember_digest.nil?
+	# 	BCrypt::Password.new(remember_digest).is_password?(remember_token)
+	# end
 
 	def forget
 		update_attribute(:remember_digest,nil)
 	end
+
+	def activate
+		update_attribute(:activated, true)
+		update_attribute(:activated_at, Time.zone.now)
+	end
+
+	def send_activation_email
+		UserMailer.account_activation(self).deliver_now
+	end
+
+	def create_reset_digest
+		self.reset_token = User.new_token
+		update_attribute(:reset_digest,User.digest(reset_token))
+		update_attribute(:reset_sent_at,Time.zone.now)
+	end
+
+	def sent_password_reset_email
+		UserMailer.password_reset(self).deliver_now
+	end
+
+	def password_reset_expired?
+		#密码重设邮件已经发出超过两小时
+		reset_sent_at < 2.hours.ago
+	end
+
+	private
+		#将电子邮件地址统一改成小写
+		def downcase_email
+			self.email = email.downcase
+		end
+
+		def create_activation_digest
+			self.activation_token = User.new_token
+			self.activation_digest = User.digest(activation_token)
+		end
 end
