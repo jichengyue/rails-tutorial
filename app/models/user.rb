@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
 	has_secure_password
 	validates :password,presence: true,length: { minimum: 6},allow_nil:true
 
+	has_many :microposts,dependent: :destroy
 	#返回指定字符串的哈希摘要
 	def User.digest(string)
 		cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
@@ -68,6 +69,12 @@ class User < ActiveRecord::Base
 		#密码重设邮件已经发出超过两小时
 		reset_sent_at < 2.hours.ago
 	end
+
+	# 实现动态流原型
+  	# 完整的实现参见第 12 章
+  	def feed
+    	Micropost.where("user_id = ?", id)
+  	end
 
 	private
 		#将电子邮件地址统一改成小写

@@ -1,6 +1,6 @@
 <% provide(:title,@user.name) %>
 <div>
-	<aside class="col-lg-4">
+	<aside class="col-md-4">
 	<!-- 上面的col-lg-4和书中的col-md-4不一致是因为高分辨率。针对不同的屏幕，手机，小于 768px是xs 平板电脑，768px 起是sm 台式电脑，992px 起是md 大台式电脑，1200px 起lg 此电脑1280x800
 	 -->
 		<section class="user_info">
@@ -10,4 +10,13 @@
 			</h1>
 		</section>
 	</aside>
+	<div class="col-md-4 custom-postion">
+    <% if @user.microposts.any? %>
+      <h3>Microposts (<%= @user.microposts.count %>)</h3>
+      <ul class="microposts">
+        <%= render @microposts %>
+      </ul>
+      <%= will_paginate @microposts %>
+    <% end %>
+  	</div>
 </div>

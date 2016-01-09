@@ -14,6 +14,7 @@ class UsersController < ApplicationController
 
   def show
   	@user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page:params[:page])
   	#debugger
   end
 
@@ -62,6 +63,8 @@ class UsersController < ApplicationController
 
     #事前过滤器
     #确保用户已登录
+=begin
+
     def logged_in_user
       unless logged_in?
         store_location
@@ -69,6 +72,8 @@ class UsersController < ApplicationController
         redirect_to login_url
       end
     end
+    
+=end
 
     def correct_user
       @user = User.find(params[:id])
