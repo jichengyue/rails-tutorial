@@ -81,8 +81,13 @@ class User < ActiveRecord::Base
 
 	# 实现动态流原型
   	# 完整的实现参见第 12 章
+  	# following是主动的，我主动关注的人
   	def feed
-    	Micropost.where("user_id = ?", id)
+    	#Micropost.where("user_id = ?", id)
+    	#Micropost.where("user_id IN (?) OR user_id=?",following_ids,id)
+    	#Micropost.where("user_id IN (:following_ids) OR user_id = :user_id",following_ids: following_ids, user_id: id)
+  		following_ids = "SELECT followed_id FROM relationships WHERE  follower_id = :user_id"
+    	Micropost.where("user_id IN (#{following_ids}) OR user_id = :user_id", user_id: id)
   	end
 
 		# 关注另一个用户
